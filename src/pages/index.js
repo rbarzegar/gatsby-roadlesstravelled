@@ -5,7 +5,7 @@ import Posts from "../components/posts"
 import SEO from "../components/seo"
 
 export default ({ data }) => {
-  const posts = data.allMarkdownRemark.edges
+  const posts = data.allContentfulBlogPost.edges
 
   return (
     <Layout>
@@ -18,19 +18,18 @@ export default ({ data }) => {
 
 export const query = graphql`
   query {
-    allMarkdownRemark(sort: { order: DESC, fields: frontmatter___date }) {
+    allContentfulBlogPost(sort: { fields: date, order: DESC }) {
       edges {
         node {
+          title
+          slug
+          date(formatString: "MMMM Do YYYY")
+          excerpt {
+            childMarkdownRemark {
+              excerpt
+            }
+          }
           id
-          excerpt
-          frontmatter {
-            date(formatString: "MMMM D YYYY")
-            description
-            title
-          }
-          fields {
-            slug
-          }
         }
       }
     }

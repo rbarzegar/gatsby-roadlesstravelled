@@ -12,10 +12,10 @@ export default function Posts({ posts }) {
         {posts.map(({ node }) => (
           <Card
             key={node.id}
-            to={node.fields.slug}
-            title={node.frontmatter.title}
-            date={node.frontmatter.date}
-            excerpt={node.excerpt}
+            to={node.slug}
+            title={node.title}
+            date={node.date}
+            excerpt={node.excerpt.childMarkdownRemark.excerpt}
           />
         ))}
       </CardGrid>

@@ -1,6 +1,7 @@
 import React from "react"
 import { graphql } from "gatsby"
 import styled from "styled-components"
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -9,14 +10,14 @@ import blogimg from "../images/blogging.jpg"
 import { TagButton } from "../styles/tagbutton"
 
 export default ({ data, pageContext }) => {
-  const post = data.markdownRemark
-  const { title, description, date, author, tags } = post.frontmatter
-  console.log(...tags)
+  const post = data.contentfulBlogPost
+  const { title, date, author, tags } = post
+  console.log(post)
   return (
     <Layout>
       <SEO
         title={title}
-        description={description}
+        // description={description}
         pathname={pageContext.slug}
       />
       <BlogJumbo />
@@ -28,14 +29,14 @@ export default ({ data, pageContext }) => {
               {date} | {author}
             </div>
             <div>
-              {tags.map(tag => (
-                <TagButton>{tag}</TagButton>
+              {tags.map((tag, index) => (
+                <TagButton key={index}>{tag.content}</TagButton>
               ))}
             </div>
           </BlogMeta>
         </BlogHeader>
         <CenterDivider />
-        <div dangerouslySetInnerHTML={{ __html: post.html }} />
+        {documentToReactComponents(data.contentfulBlogPost.body.json)}
       </MainBlog>
     </Layout>
   )
@@ -43,14 +44,15 @@ export default ({ data, pageContext }) => {
 
 export const query = graphql`
   query($slug: String!) {
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      html
-      frontmatter {
-        title
-        date(formatString: "MMMM D YYYY")
-        description
-        author
-        tags
+    contentfulBlogPost(slug: { eq: $slug }) {
+      date(formatString: "MMMM Do YYYY")
+      title
+      tags {
+        content
+      }
+      author
+      body {
+        json
       }
     }
   }
